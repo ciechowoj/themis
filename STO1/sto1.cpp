@@ -1,0 +1,51 @@
+#include <cstdio>
+#include <vector>
+#include <utility>
+#include <climits>
+#include <algorithm>
+
+static const int infty = INT_MAX / 2;
+
+void instance() {
+	int num_rows, num_cols;
+	std::scanf("%d%d", &num_rows, &num_cols);
+
+	std::vector<std::vector<std::pair<int, int> > > table(num_cols, std::vector<std::pair<int, int> >(num_rows + 2, std::make_pair(infty, infty)));
+
+	for (int row = 0; row < num_rows; ++row) {
+		for (int col = 0; col < num_cols; ++col) {
+			std::scanf("%d", &table[col][row + 1]);
+		}
+	}
+
+	for (int row = 0; row < num_rows; ++row) {
+		table[0][row + 1].second = table[0][row + 1].first;
+	}
+
+	for (int col = 1; col < num_cols; ++col) {
+		for (int row = 1; row <= num_rows; ++row) {
+			int top = table[col - 1][row - 1].second;
+			int center = table[col - 1][row].second;
+			int bottom = table[col - 1][row + 1].second;
+			int best = std::min(std::min(top, center), bottom);
+			table[col][row].second = best + table[col][row].first;
+		}
+	}
+
+	int best = infty;
+	for (int row = 0; row < num_rows; ++row) {
+		best = std::min(best, table[num_cols - 1][row + 1].second);
+	}
+
+	std::printf("%d\n", best);
+}
+
+int main() {
+	int num_instances = 0;
+	std::scanf("%d", &num_instances);
+	for (int i = 0; i < num_instances; ++i) {
+		instance();
+	}
+
+	return 0;
+}
